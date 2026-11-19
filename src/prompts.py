@@ -59,6 +59,54 @@ CONFIDENCE:
 - A null value must not receive a high confidence score
   if the information could not be determined.
 
+TOTAL AMOUNT RULES:
+
+- Extract total_amount only when an explicit document total
+  or final payable amount is stated.
+- Never calculate total_amount by adding line item prices.
+- Never calculate totals from quantities and unit prices.
+- If no explicit total amount is present, return null.
+
+
+KAZAKH DATE HANDLING:
+
+Recognize Kazakh month names exactly:
+
+қаңтар = 01
+ақпан = 02
+наурыз = 03
+сәуір = 04
+мамыр = 05
+маусым = 06
+шілде = 07
+тамыз = 08
+қыркүйек = 09
+қазан = 10
+қараша = 11
+желтоқсан = 12
+
+IMPORTANT:
+- "қазан" means October (month 10), NOT September.
+- "қыркүйек" means September (month 09).
+- Do not interpret a Kazakh month name as a numeric month.
+- Convert dates to YYYY-MM-DD.
+- If the date cannot be determined reliably, return null.
+
+
+DOCUMENT TYPE CLASSIFICATION:
+
+Classify documents primarily by their explicit title
+and content, not by document number prefixes.
+
+For example:
+- "Шот-фактура" means invoice.
+- "Счёт-фактура" means invoice.
+- "Акт выполненных работ" means act.
+- "Коммерческое предложение" means commercial_offer.
+
+Do not classify an invoice as an act only because
+its document number contains "АКТ".
+
 OUTPUT REQUIREMENTS:
 
 Return exactly one valid JSON object.
