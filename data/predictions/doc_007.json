@@ -1,0 +1,39 @@
+{
+  "doc_type": "act",
+  "supplier_name": "ТОО «Темир Сервис Инжиниринг»",
+  "supplier_bin": "210840013652",
+  "doc_number": "AVR-092",
+  "doc_date": "2026-10-30",
+  "currency": "KZT",
+  "total_amount": 145000.0,
+  "vat_amount": null,
+  "line_items": [
+    {
+      "name": "Диагностика производственного оборудования",
+      "qty": 2,
+      "price": 35000.0
+    },
+    {
+      "name": "Профилактическое обслуживание электродвигателей",
+      "qty": 3,
+      "price": 15000.0
+    },
+    {
+      "name": "Проверка и настройка датчиков температуры",
+      "qty": 1,
+      "price": 30000.0
+    }
+  ],
+  "field_confidence": {
+    "doc_type": 1.0,
+    "supplier_name": 1.0,
+    "supplier_bin": 1.0,
+    "doc_number": 1.0,
+    "doc_date": 1.0,
+    "currency": 1.0,
+    "total_amount": 1.0,
+    "vat_amount": 0.0,
+    "line_items": 1.0
+  },
+  "warnings": []
+}

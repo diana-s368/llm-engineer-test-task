@@ -1,0 +1,36 @@
+{
+  "doc_type": "commercial_offer",
+  "supplier_name": "ТОО «Иртыш Электро Снаб»",
+  "supplier_bin": "240340018571",
+  "doc_number": "IES-441",
+  "doc_date": "2026-11-07",
+  "currency": "KZT",
+  "total_amount": 150000.0,
+  "vat_amount": null,
+  "line_items": [
+    {
+      "name": "Кабель силовой ВВГнг 3х2,5",
+      "qty": 400,
+      "price": 240.0
+    },
+    {
+      "name": "Автоматический выключатель",
+      "qty": 30,
+      "price": 1800.0
+    }
+  ],
+  "field_confidence": {
+    "doc_type": 0.95,
+    "supplier_name": 0.98,
+    "supplier_bin": 0.99,
+    "doc_number": 0.99,
+    "doc_date": 0.95,
+    "currency": 0.99,
+    "total_amount": 0.98,
+    "vat_amount": 0.0,
+    "line_items": 0.95
+  },
+  "warnings": [
+    "The document title 'СЧЕТ НА ОПЛАТУ' indicates it's a payment invoice, but the context suggests it's a commercial offer (quotation) due to the presence of 'Основание: Договор поставки' (delivery agreement) and the structure of the document."
+  ]
+}

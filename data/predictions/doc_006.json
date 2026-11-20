@@ -1,0 +1,45 @@
+{
+  "doc_type": "invoice",
+  "supplier_name": "«Алатау Кеңсе Жабдықтары» ЖШС",
+  "supplier_bin": "220340015937",
+  "doc_number": "AKJ-316",
+  "doc_date": "2026-10-05",
+  "currency": "KZT",
+  "total_amount": 336400.0,
+  "vat_amount": 46400.0,
+  "line_items": [
+    {
+      "name": "Кеңсе үстелі",
+      "qty": 4,
+      "price": 30000.0
+    },
+    {
+      "name": "Кеңсе орындығы",
+      "qty": 8,
+      "price": 10000.0
+    },
+    {
+      "name": "Құжат сақтауға арналған сөре",
+      "qty": 2,
+      "price": 25000.0
+    },
+    {
+      "name": "Ақпараттық тақта",
+      "qty": 5,
+      "price": 8000.0
+    }
+  ],
+  "field_confidence": {
+    "doc_type": 1.0,
+    "supplier_name": 1.0,
+    "supplier_bin": 1.0,
+    "doc_number": 1.0,
+    "doc_date": 1.0,
+    "currency": 1.0,
+    "total_amount": 1.0,
+    "vat_amount": 1.0,
+    "line_items": 1.0,
+    "field_confidence": 1.0
+  },
+  "warnings": []
+}

@@ -1,0 +1,26 @@
+{
+  "doc_type": "invoice",
+  "supplier_name": "ТОО «Иртыш Электро Снаб»",
+  "supplier_bin": "240340018571",
+  "doc_number": "IES-441",
+  "doc_date": "2026-11-07",
+  "currency": "KZT",
+  "total_amount": null,
+  "vat_amount": null,
+  "line_items": [
+    {
+      "name": "Кабель силовой ВВГнг 3х2,5",
+      "qty": 400,
+      "price": 240
+    },
+    {
+      "name": "Автоматический выключатель двухполюсный",
+      "qty": 30,
+      "price": 1800
+    }
+  ],
+  "field_confidence": {},
+  "warnings": [
+    "Conflicting invoice totals: 150000 KZT in the calculation section and 155000 KZT in the payment section. No authoritative total can be determined."
+  ]
+}

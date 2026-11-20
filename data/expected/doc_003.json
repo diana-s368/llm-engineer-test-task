@@ -1,0 +1,21 @@
+
+{
+  "doc_type": "invoice",
+  "supplier_name": "ЖШС «Көкжиек Құрылыс» / ТОО \"Кокжиек Курулыс\"",
+  "supplier_bin": "210640900180",
+  "doc_number": "АКТ-09",
+  "doc_date": "2026-10-09",
+  "currency": "KZT",
+  "total_amount": 340000,
+  "vat_amount": null,
+  "line_items": [
+    {
+      "name": "Қызмет көрсету / Оказание услуг",
+      "qty": 1,
+      "price": 340000
+    }
+  ],
+  "field_confidence": {},
+  "warnings": []
+}
+

@@ -1,0 +1,40 @@
+{
+  "doc_type": "invoice",
+  "supplier_name": "ТОО «Сарыарка Офис Снаб»",
+  "supplier_bin": null,
+  "doc_number": "SO-247/26",
+  "doc_date": "2026-09-14",
+  "currency": "KZT",
+  "total_amount": 103240.0,
+  "vat_amount": 14240.0,
+  "line_items": [
+    {
+      "name": "Бумага офисная А4, 80 г/м²",
+      "qty": 20,
+      "price": 2400.0
+    },
+    {
+      "name": "Картридж для лазерного принтера",
+      "qty": 5,
+      "price": 5000.0
+    },
+    {
+      "name": "Папка-регистратор А4",
+      "qty": 40,
+      "price": 400.0
+    }
+  ],
+  "field_confidence": {
+    "supplier_name": 0.95,
+    "supplier_bin": 0.0,
+    "doc_number": 0.95,
+    "doc_date": 0.95,
+    "currency": 0.95,
+    "total_amount": 0.95,
+    "vat_amount": 0.95,
+    "line_items": 0.95
+  },
+  "warnings": [
+    "Date format in document: 14.09.2026 (DD.MM.YYYY) - converted to 2026-09-14 (YYYY-MM-DD)"
+  ]
+}

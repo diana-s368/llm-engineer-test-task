@@ -1,0 +1,24 @@
+{
+  "doc_type": "invoice",
+  "supplier_name": "ТОО «Каспий Пром Комплект»",
+  "supplier_bin": "230540017826",
+  "doc_number": "KP-0587",
+  "doc_date": "2026-08-21",
+  "currency": "KZT",
+  "total_amount": 167000,
+  "vat_amount": null,
+  "line_items": [
+    {
+      "name": "Насос циркуляционный промышленный",
+      "qty": 2,
+      "price": 62500
+    },
+    {
+      "name": "Комплект монтажных фитингов",
+      "qty": 3,
+      "price": 14000
+    }
+  ],
+  "field_confidence": {},
+  "warnings": []
+}

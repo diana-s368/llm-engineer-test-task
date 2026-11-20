@@ -1,0 +1,36 @@
+{
+  "doc_type": "commercial_offer",
+  "supplier_name": "ТОО \"Алматы Трейд Компани\"",
+  "supplier_bin": "170340021554",
+  "doc_number": "1245",
+  "doc_date": "2026-11-12",
+  "currency": "KZT",
+  "total_amount": 186180.0,
+  "vat_amount": 25680.0,
+  "line_items": [
+    {
+      "name": "Бумага A4 80г/м2",
+      "qty": 50,
+      "price": 2100.0
+    },
+    {
+      "name": "Картридж HP 85A",
+      "qty": 3,
+      "price": 18500.0
+    }
+  ],
+  "field_confidence": {
+    "doc_type": 0.95,
+    "supplier_name": 0.95,
+    "supplier_bin": 0.95,
+    "doc_number": 0.95,
+    "doc_date": 0.95,
+    "currency": 0.95,
+    "total_amount": 0.95,
+    "vat_amount": 0.95,
+    "line_items": 0.95
+  },
+  "warnings": [
+    "Date format is in Russian: 12.11.2026 (DD.MM.YYYY) but converted to YYYY-MM-DD"
+  ]
+}

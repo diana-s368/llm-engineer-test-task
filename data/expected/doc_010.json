@@ -1,0 +1,29 @@
+{
+  "doc_type": "invoice",
+  "supplier_name": "ТОО «Жетісу Техно Жабдық»",
+  "supplier_bin": "230940016284",
+  "doc_number": "JT-0186",
+  "doc_date": "2026-11-18",
+  "currency": "KZT",
+  "total_amount": 89000,
+  "vat_amount": null,
+  "line_items": [
+    {
+      "name": "Датчик температуры PT100",
+      "qty": 4,
+      "price": 15500
+    },
+    {
+      "name": "Кабель сигнальный экранированный",
+      "qty": 60,
+      "price": 300
+    },
+    {
+      "name": "Клеммная колодка DIN",
+      "qty": 30,
+      "price": 300
+    }
+  ],
+  "field_confidence": {},
+  "warnings": []
+}

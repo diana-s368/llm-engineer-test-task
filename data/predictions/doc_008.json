@@ -1,0 +1,44 @@
+{
+  "doc_type": "commercial_offer",
+  "supplier_name": "NOMAD CLOUD LAB",
+  "supplier_bin": null,
+  "doc_number": null,
+  "doc_date": null,
+  "currency": "USD",
+  "total_amount": null,
+  "vat_amount": null,
+  "line_items": [
+    {
+      "name": "IT Infrastructure Audit",
+      "qty": 1,
+      "price": 850.0
+    },
+    {
+      "name": "Cloud Monitoring",
+      "qty": 1,
+      "price": 210.0
+    },
+    {
+      "name": "Data Migration Setup",
+      "qty": 1,
+      "price": 460.0
+    }
+  ],
+  "field_confidence": {
+    "doc_type": 0.95,
+    "supplier_name": 0.95,
+    "supplier_bin": 0.0,
+    "doc_number": 0.0,
+    "doc_date": 0.0,
+    "currency": 0.95,
+    "total_amount": 0.0,
+    "vat_amount": 0.0,
+    "line_items": 0.95
+  },
+  "warnings": [
+    "Document date is not specified in the document",
+    "Total amount is not explicitly stated in the document (only line items are listed)",
+    "Supplier BIN is not provided in the document",
+    "Document number is not provided in the document"
+  ]
+}

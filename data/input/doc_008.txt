@@ -1,0 +1,35 @@
+NOMAD CLOUD LAB
+IT Infrastructure & Managed Services
+Almaty, Kazakhstan
+sales@nomadcloud.example
+
+                 COMMERCIAL PROPOSAL
+                 Коммерческое предложение
+
+Prepared for: ТОО «Астана Дата Центр»
+We are pleased to offer the following IT services for your infrastructure modernization project.
+Предлагаемый перечень услуг:
+
+Service / Услуга                         Qty     Unit Price     Billing Terms
+-------------------------------------------------------------------------------
+IT Infrastructure Audit /                 1       850.00 USD     One-time
+Аудит ИТ-инфраструктуры
+Cloud Monitoring /                        1       210.00 USD     Per month
+Мониторинг облачной инфраструктуры
+Data Migration Setup /                    1       460.00 USD     One-time
+Настройка миграции данных
+-------------------------------------------------------------------------------
+
+Service details:
+1. IT Infrastructure Audit: Анализ серверной инфраструктуры, сетевой топологии и текущих настроек.
+2. Cloud Monitoring: Ежемесячный мониторинг доступности серверов и облачных сервисов. Billing period: December 2026. Quantity: 1 monthly service period. Renewal is subject to customer approval.
+3. Data Migration Setup: Первоначальная настройка инструментов переноса данных и тестовая миграция.
+
+Commercial terms:
+- Currency: USD
+- Payment terms: bank transfer.
+- All services are subject to a separate service agreement.
+- Offer valid until: 10 December 2026.
+- Service activation after written confirmation.
+
+For questions, please contact: Sales Team, NOMAD CLOUD LAB
