@@ -2,226 +2,376 @@
 
 ## 1. Project Overview
 
-A Python-based document information extraction system that processes unstructured business documents and converts them into structured JSON.
+This project implements a local Python-based document information extraction system. It uses a Large Language Model (LLM) to convert unstructured business documents into structured JSON data.
 
-The system is designed to extract information from:
+The application supports three types of documents:
+
 - Invoices
 - Commercial offers
-- Acts
+- Acts of completed works
 
-The main objective is to produce reliable structured data while minimizing hallucinations, missing values, and incorrect field extraction.
+The main objective is to extract relevant information while minimizing hallucinations, missing values, and incorrect field extraction.
 
-## 2. Task Requirements
+The system uses a local LLM through Ollama, Pydantic for structured data validation, and Pytest for automated testing.
 
-The application must:
+## 2. Technology Stack
 
-- Accept document text as input.
-- Extract information according to a fixed JSON schema.
-- Return `null` for information that is not explicitly available in the document.
-- Never invent missing values or calculate unspecified taxes.
-- Detect conflicting information and report it in `warnings`.
-- Validate the generated JSON programmatically.
-- Provide field-level confidence scores.
-- Support local LLM inference without requiring a paid API.
+| Technology | Purpose |
+|---|---|
+| Python 3.11.18 | Application logic |
+| Ollama | Local LLM inference |
+| Qwen3:4b | Document information extraction |
+| Pydantic 2 | Schema and data validation |
+| Pytest | Automated testing |
+| HTTPX | Handling connection-related errors |
+| Git / GitHub | Version control |
 
-## 3. Output Schema
+### Model Selection
 
-The expected JSON structure:
+The selected model is **Qwen3:4b**, using Q4_K_M quantization. The downloaded model size is approximately 2.5 GB.
 
-- `doc_type`: invoice, commercial_offer, act, or unknown.
-- `supplier_name`: string or null.
-- `supplier_bin`: 12-digit string or null.
-- `doc_number`: string or null.
-- `doc_date`: YYYY-MM-DD or null.
-- `currency`: KZT, USD, EUR, or null.
-- `total_amount`: number or null.
-- `vat_amount`: number or null.
-- `line_items`: array of items containing name, qty, and price.
-- `field_confidence`: confidence scores for extracted fields.
-- `warnings`: array of strings describing inconsistencies or extraction issues.
+Model selection was an important part of the initial development process. The available hardware was limited to approximately 16 GB of RAM and an NVIDIA GeForce GTX 1650 Ti. Therefore, larger models were not the preferred option for local experimentation.
 
-## 4. Planned Technology Stack
+Qwen3:4b was selected as a compromise between model size, inference speed, and multilingual capabilities. This was particularly relevant because the target documents contain Russian, Kazakh, English, and mixed-language text.
 
-- Python — application logic.
-- Pydantic — structured output validation.
-- Ollama — local LLM inference (planned).
-- Pytest — automated testing.
-- Git / GitHub — version control.
+The model runs locally, so the application does not require a paid external LLM API.
 
-The final implementation and model selection will be documented as development progresses.
+## 3. Development Environment and Initial Setup
 
-## 5. Dataset
+The project was developed incrementally using:
 
-The evaluation dataset will contain at least 10 documents:
+- Python 3.11.18
+- Conda (Miniconda3)
+- An isolated environment named `.venv`
+- Visual Studio Code
+- Windows PowerShell 5.1
+- pip for dependency management
 
-- 3 documents provided in the original assessment.
-- At least 7 additional documents created for testing.
+One of the initial challenges was configuring a reproducible development environment. This involved creating an isolated Python environment, selecting the correct interpreter in VS Code, installing dependencies, and configuring the integrated terminal.
 
-The dataset will include challenging cases such as:
-- Missing fields.
-- Conflicting dates and amounts.
-- Mixed Kazakh-Russian text.
-- OCR errors.
-- Documents without VAT information.
-- Multiple line items.
+The original project directory also contained spaces in its name. It was renamed to `llm-engineer-test-task` to simplify paths and avoid potential environment and tooling issues.
 
-Each document will have a corresponding expected JSON output (ground truth).
+The dependencies are declared in `requirements.txt`.
 
-## 6. Validation and Evaluation
+## 4. Output Schema
 
-The system will include:
+The application uses two Pydantic models: `DocumentExtraction` and `LineItem`.
 
-- Programmatic JSON schema validation.
-- Field-level accuracy measurement.
-- Hallucination counting: fields populated when the expected value is null.
-- Omission counting: fields returned as null when the expected value exists.
+The extraction schema contains:
 
-A separate evaluation command will process the complete dataset and generate a report.
+| Field | Description |
+|---|---|
+| `doc_type` | invoice, commercial_offer, act, or unknown |
+| `supplier_name` | Supplier name |
+| `supplier_bin` | 12-digit business identification number |
+| `doc_number` | Document number |
+| `doc_date` | Document date in YYYY-MM-DD format |
+| `currency` | KZT, USD, EUR, or null |
+| `total_amount` | Explicitly stated final amount |
+| `vat_amount` | Explicitly stated VAT amount |
+| `line_items` | Items containing name, quantity, and unit price |
+| `field_confidence` | Model-generated confidence scores |
+| `warnings` | Extraction issues and document inconsistencies |
 
-## 7. Project Structure
+The schema uses strict type validation and rejects unexpected fields. Additional validation rules check BIN formatting, calendar dates, and confidence score boundaries.
 
-The project will be organized into separate modules for extraction, validation, prompts, evaluation, and testing.
+Missing information is represented as `null`. The application does not intentionally calculate missing VAT or invent document totals.
 
-## 8. Installation and Usage
+## 5. Application Architecture
 
-Installation and execution instructions will be added after implementation.
+The application follows a straightforward extraction pipeline:
 
-## 9. Limitations and Development Status
+```text
+Input document (.txt)
+        |
+        v
+System Prompt + Document Text
+        |
+        v
+Ollama + Qwen3:4b
+        |
+        v
+Structured JSON Output
+        |
+        v
+Pydantic Validation
+        |
+        v
+Business Validation
+        |
+        v
+Validated DocumentExtraction
+        |
+        v
+JSON Output
+```
 
-This project is being developed as a time-limited technical assessment.
+The main components are separated into individual modules.
 
-Implementation decisions, known limitations, trade-offs, and unfinished features will be documented here as development progresses.
+**`src/prompts.py`**
+
+Contains the multilingual system prompt defining extraction rules, supported document types, missing-value handling, date and currency normalization, VAT rules, line-item extraction, contradiction handling, and JSON output requirements.
+
+**`src/extractor.py`**
+
+Implements `extract_document()`. It sends the document text and system prompt to Ollama, uses the Pydantic JSON Schema as the structured output format, and validates the model response.
+
+**`src/schemas.py`**
+
+Defines the Pydantic models and field-level constraints.
+
+**`src/validator.py`**
+
+Implements additional business validation checks, including negative monetary values, quantities, prices, and low-confidence fields.
+
+## 6. Prompt Engineering and Extraction Rules
+
+The system prompt was developed and refined through experiments with Russian, Kazakh, English, and mixed-language documents.
+
+Several important rules were introduced:
+
+- Missing values must be returned as `null`.
+- The model must not invent supplier identifiers or document dates.
+- VAT must only be extracted when a numeric amount is explicitly stated.
+- VAT exemption or missing VAT information must not be interpreted as a numeric zero.
+- `total_amount` must represent an explicitly stated final amount, not a sum calculated from individual line items.
+- Conflicting totals must be reported through `warnings`.
+- Document classification should rely on the document's title and content rather than only its number or reference.
+
+An important distinction in the implementation is between ground truth and model confidence. Ground truth is manually prepared reference data, whereas confidence scores are generated by the LLM itself. These scores are not calibrated probabilities and do not guarantee extraction correctness.
+
+## 7. Dataset Creation
+
+A small evaluation dataset containing **10 business documents** was prepared.
+
+It consists of three initial example documents and seven additional fictional business documents created to cover different extraction challenges.
+
+Each input document has a corresponding manually prepared ground-truth JSON file. Ground truth was prepared independently of model predictions.
+
+| Document | Type | Main test case |
+|---|---|---|
+| 001 | Invoice | Russian invoice with explicit VAT and total |
+| 002 | Commercial offer | Separate service prices without an explicit total |
+| 003 | Invoice | Mixed Kazakh/Russian text and Kazakh date |
+| 004 | Invoice | Missing supplier BIN |
+| 005 | Invoice | VAT information not provided |
+| 006 | Invoice | Kazakh document with multiple line items |
+| 007 | Act | Completed works and service period |
+| 008 | Commercial offer | Incomplete metadata and monthly service pricing |
+| 009 | Invoice | Contradictory invoice totals |
+| 010 | Invoice | OCR character substitutions and mixed-language text |
+
+The dataset covers missing fields, different document types, VAT-present and VAT-absent cases, multiple line items, multilingual text, OCR noise, and contradictory information.
+
+All 10 ground-truth JSON files passed Pydantic validation.
+
+## 8. Batch Extraction
+
+The `run_batch_extraction.py` script processes all documents in `data/input/`.
+
+For each document, it:
+
+1. Reads the original text.
+2. Calls `extract_document()`.
+3. Receives a validated Pydantic object.
+4. Saves the extracted result as JSON in `data/predictions/`.
+
+Predictions are stored separately from ground truth to ensure that evaluation uses independent reference data.
+
+**Initial batch extraction result: 10/10 documents processed successfully, with no execution failures.**
+
+## 9. Error Handling and Testing
+
+Basic application-level error handling was implemented to make the extraction pipeline more predictable.
+
+The application handles:
+
+- Empty input documents.
+- Ollama connection errors.
+- Ollama API errors, including model-related errors.
+- Invalid JSON responses.
+- Responses that do not match the expected Pydantic schema.
+
+Original exceptions are preserved through exception chaining to support debugging.
+
+Automated tests cover schema validation, business validation, and extraction error handling. The error-handling tests use mocking to simulate failures without requiring actual LLM calls.
+
+**Test result: 23 tests passed.**
+
+## 10. Evaluation
+
+A simple evaluation script is implemented in `eval/evaluate.py`.
+
+It compares model predictions against the manually prepared ground truth and reports field-level accuracy, hallucinations, and omissions.
+
+- **Field accuracy:** percentage of exact matches for each field.
+- **Hallucinations:** fields populated by the model when the expected value is `null`.
+- **Omissions:** fields returned as `null` when the expected value exists.
+
+For numeric values, integer and floating-point representations are normalized. Text comparisons ignore differences in capitalization and extra whitespace.
+
+### Initial Evaluation Results
+
+The following results were obtained using Qwen3:4b on the 10-document dataset.
+
+| Field | Accuracy |
+|---|---:|
+| Document type | 60% |
+| Supplier name | 100% |
+| Supplier BIN | 100% |
+| Document number | 100% |
+| Document date | 90% |
+| Currency | 100% |
+| Total amount | 90% |
+| VAT amount | 100% |
+| Line items | 80% |
+
+**Hallucinations:** 1 incorrect non-null total amount.
+
+**Omissions:** 0 according to the current field-level metric.
+
+The results show that the model performs well on several structured fields but has difficulties with document classification, multilingual date normalization, and incomplete or contradictory information.
+
+Line items are evaluated using strict comparison of the complete list, including item names, quantities, and prices.
+
+## 11. Challenges and Limitations
+
+Several challenges appeared during development.
+
+**Development environment and model selection.** Setting up the local Python environment, configuring VS Code, and selecting a model compatible with the available hardware required initial experimentation.
+
+**Multilingual date extraction.** The model incorrectly interpreted the Kazakh month name `қазан` (October) in one document, returning September instead. This demonstrates that multilingual support does not guarantee correct normalization.
+
+**Document classification and contradictions.** In the evaluation dataset, the model misclassified an invoice as a commercial offer and selected one of two conflicting totals instead of returning `null`.
+
+**Line-item extraction.** Some bilingual descriptions were partially extracted, and one item name was incomplete.
+
+**Confidence scores.** The model can report high confidence even when its extracted value is incorrect. Therefore, confidence scores should not be treated as objective probabilities.
+
+The evaluation dataset is intentionally small and is suitable for demonstrating the pipeline rather than establishing production-level reliability. The current evaluation also uses exact field comparison and does not perform semantic matching of equivalent names or descriptions.
+
+### Limitations and Incomplete Requirements
+
+The project implements the core document extraction pipeline, batch processing, JSON output generation, Pydantic validation, and automated tests.
+
+However, the user-facing CLI is not fully implemented. The current solution relies on Python scripts (`run_extraction_demo.py` and `run_batch_extraction.py`) rather than a dedicated command-line interface that accepts an arbitrary input file and an output path.
+
+Therefore, the extraction pipeline is functional, but the user interaction requirement is only partially completed. Implementing a dedicated CLI with configurable input and output paths would be a necessary next step.
 
 
+## 12. What I Learned
 
-## Development Progress: Initial LLM Integration
+During this project, I gained practical experience in building an end-to-end LLM application rather than using a language model as a standalone tool.
 
-### 1. Local LLM Setup
+I learned how to:
 
-Installed Ollama and configured a local language model.
+- Configure an isolated Python development environment and manage project dependencies.
+- Select and run a local language model using Ollama.
+- Design system prompts for multilingual structured information extraction.
+- Define data contracts and validation rules using Pydantic.
+- Use JSON Schema to constrain LLM output.
+- Integrate a local LLM into a Python application.
+- Handle connection errors, API errors, and invalid model responses.
+- Write automated tests using Pytest and mocking.
+- Create a small manually annotated dataset with ground truth.
+- Implement batch processing and evaluate model predictions.
+- Use Git and GitHub to manage incremental development.
 
-- Model: Qwen3:4b
-- Quantization: Q4_K_M
-- Model size: approximately 2.5 GB
-- Inference: local execution through Ollama
-- Python client: ollama 0.6.3
+An important lesson was that valid JSON does not necessarily contain correct information. Schema validation ensures structural correctness, while evaluation against ground truth is necessary to measure extraction quality.
 
-The model was selected as a compromise between multilingual
-capabilities, inference speed, and available hardware resources.
+## 13. Installation and Usage
 
-The target document languages are Russian, Kazakh, English,
-and mixed-language documents.
+### Prerequisites
 
-### 2. Prompt Engineering
+- Python 3.11
+- Ollama installed and running
+- Git
 
-Created `src/prompts.py` containing the initial multilingual
-system prompt.
+### Setup
 
-The prompt defines:
+Clone the repository:
 
-- Supported document types.
-- Required extraction fields.
-- Missing-value handling.
-- BIN extraction rules.
-- Date normalization.
-- Currency normalization.
-- Line item extraction.
-- VAT handling.
-- Contradiction detection.
-- Confidence scores and warnings.
-- Strict JSON output requirements.
+```bash
+git clone https://github.com/diana-s368/llm-engineer-test-task.git
+cd llm-engineer-test-task
+```
 
-Additional rules were introduced after initial experiments
-to prevent the model from calculating missing total amounts,
-misclassifying documents, and confusing Kazakh month names.
+Create and activate a Conda environment:
 
-### 3. LLM Integration
+```bash
+conda create -n llm-extraction python=3.11
+conda activate llm-extraction
+```
 
-Created `src/extractor.py`.
+Install dependencies:
 
-The `extract_document()` function:
+```bash
+pip install -r requirements.txt
+```
 
-1. Accepts raw document text.
-2. Sends the system prompt and document text to Ollama.
-3. Uses Qwen3:4b for extraction.
-4. Passes the Pydantic JSON Schema as the structured output format.
-5. Disables thinking mode.
-6. Uses temperature 0.
-7. Validates the generated JSON using Pydantic.
-8. Returns a `DocumentExtraction` object.
+Download the model:
 
-### 4. Initial Extraction Experiments
+```bash
+ollama pull qwen3:4b
+```
 
-Created `test_extractor.py` to manually evaluate the model
-on three different documents.
+### Run the application
 
-Test cases:
+Run the batch extraction:
 
-- Document 1: Russian invoice with two line items,
-  explicit total amount, and numeric VAT.
-- Document 2: Russian commercial offer with separate
-  service prices, no explicitly stated total, and no VAT amount.
-- Document 3: Mixed Kazakh/Russian invoice with a Kazakh
-  month name, amount written in words, and VAT not applicable.
+```bash
+python run_batch_extraction.py
+```
 
-### 5. Observed Results
+Run the evaluation:
 
-Document 1:
-- Correct document classification.
-- Correct supplier information and BIN.
-- Correct date normalization.
-- Correct line item extraction.
-- Correct total amount and VAT.
+```bash
+python eval/evaluate.py
+```
 
-Document 2:
-- Correct commercial offer classification.
-- Correct extraction of both services.
-- Correct handling of missing BIN and document number.
-- Correctly returns null for total_amount.
-- Does not calculate a total by adding individual service prices.
+Run automated tests:
 
-Document 3:
-- Correct invoice classification after prompt refinement.
-- Correct supplier information and BIN.
-- Correct extraction of document number.
-- Correct extraction of the amount written in words.
-- Correct handling of VAT not applicable.
-- Incorrect normalization of the Kazakh month name "қазан".
+```bash
+python -m pytest -v
+```
 
-### 6. Known Limitations and Technical Decisions
+A single-document demonstration is also available through `run_extraction_demo.py`.
 
-The current model still incorrectly interprets the Kazakh
-month name "қазан" (October) as September.
+## 14. Project Structure
 
-This issue is intentionally documented rather than treated
-as a completed fix.
+```text
+llm-engineer-test-task/
+│
+├── data/
+│   ├── input/
+│   ├── expected/
+│   └── predictions/
+│
+├── eval/
+│   └── evaluate.py
+│
+├── src/
+│   ├── __init__.py
+│   ├── schemas.py
+│   ├── prompts.py
+│   ├── extractor.py
+│   └── validator.py
+│
+├── tests/
+│   ├── test_schemas.py
+│   ├── test_validator.py
+│   └── test_extractor.py
+│
+├── create_dataset.py
+├── run_extraction_demo.py
+├── run_batch_extraction.py
+├── requirements.txt
+├── README.md
+└── .gitignore
+```
 
-We decided not to keep expanding the prompt indefinitely.
-A more reliable solution may be to implement deterministic
-date normalization in Python, using explicit language-specific
-month mappings.
+## 15. Final Development Status
 
-Other known limitations:
+The project implements a complete basic pipeline for local business document extraction, including structured output generation, Pydantic validation, business validation, error handling, batch processing, automated tests, and a small evaluation workflow.
 
-- Confidence scores are generated by the LLM and are not
-  calibrated probabilities.
-- Extraction quality has only been evaluated on three documents.
-- Repeated inference can produce slightly different warnings.
-- Pydantic validates structure and types, but cannot guarantee
-  that extracted values are factually correct.
-- Error handling and automated extraction tests are not yet
-  implemented.
-
-### 7. Next Development Steps
-
-1. Implement deterministic normalization for Kazakh dates.
-2. Add error handling for Ollama and Pydantic validation.
-3. Create a dataset containing at least 10 documents.
-4. Prepare ground-truth JSON files.
-5. Implement evaluation metrics:
-   - Field accuracy
-   - Hallucination rate
-   - Omission rate
-6. Add automated unit and integration tests.
-7. Implement a command-line interface.
-8. Complete project documentation and architecture reflection.
+The current results are a baseline for the selected model and dataset. The project prioritizes a clear, reproducible implementation and an honest assessment of model limitations rather than attempting to achieve perfect extraction accuracy.
